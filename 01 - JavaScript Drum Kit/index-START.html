@@ -58,13 +58,35 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
-    window.addEventListener('keydown', function(e) {
-        console.log(e.keyCode);
+    //prida listener "stisknuti klavesy" na cele okno prohlizece s funkci prehrajZvuk()
+    window.addEventListener('keydown', prehrajZvuk);
+
+    function prehrajZvuk(e) {
+        console.log(e.keyCode);                         //vypise kod stisknute klavesy
+        //do promenne audio vyhleda a naplni <tag> s nazvem audio a data-key setjenym jako kod stisknute klavesy
         const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
-        console.log(audio);
-        if(!audio) return; //konec funkce
-        audio.play();
-    });
+        //do promenne key vyhleda a naplni <tag> s nazvem key a data-key setjenym jako kod stisknute klavesy
+        const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+        console.log(key);                               //vypise <tag> naplneny v promenne key
+        console.log(audio);                             //vypise <tag> naplneny v promenne audio
+        if (!audio) return;                             //konec funkce
+        audio.currentTime = 0;                          //nastavi audio na zacatek i kdyz zrovna hraje
+        audio.play();                                   //Prehraje <tag> audio
+        key.classList.add('playing');                   //K promenne key prida classu "playing"
+    }
+
+    const keys = document.querySelectorAll('.key');     //Do promenne keys nacte vsechny prvky s classou "key"
+    //console.log('klice', keys);                       //Vypise vsechny klice
+    //Kazdemu prvku v poli keys prida listener na transitionend a k nemu funkci ukonciTransiton()
+    keys.forEach(key => key.addEventListener('transitionend', ukonciTransiton));
+
+    //Funkce pro ukonceni stylu
+    function ukonciTransiton(e) {
+        //console.log(e);                               //vypise vsechny prvky s "transitionend"
+        //if (e.propertyName !== 'transform') return;   //pokud to neni transform, tak skonci. Ale nevim proc
+        this.classList.remove('playing');               //odebere z classListu classu "playing"
+    }
+
 </script>
 
 
