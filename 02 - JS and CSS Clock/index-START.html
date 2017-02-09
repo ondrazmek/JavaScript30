@@ -9,7 +9,7 @@
 
     <div class="clock">
       <div class="clock-face">
-        <div class="hand hour-hand"></div>
+        <!-- <div class="hand hour-hand"></div> -->
         <div class="hand min-hand"></div>
         <div class="hand second-hand"></div>
       </div>
@@ -61,13 +61,57 @@
       background:black;
       position: absolute;
       top:50%;
+      transform-origin: 100%;   /* pocatek rotace ve stredu kruhu */
+      transform: rotate(90deg); /* Vychozi poloha svisle */
+      transition: all 0.05s;    /* doba tvrani zmeny */
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);  /* prubeh zmeny */
+    }
+
+    .hour-hand {
+        width: 30%;
+        left: 20%;
+    }
+
+    .second-hand {
+        background: white;
+        height: 3px;
     }
 
   </style>
 
   <script>
+    const secondHand = document.querySelector('.second-hand');      //do promenne secondHand priradi <div> s classou .second-hand
+    const minsHand = document.querySelector('.min-hand');           //do promenne secondHand priradi <div> s classou .second-hand
+    //const hourHand = document.querySelector('.hour-hand');        //do promenne secondHand priradi <div> s classou .second-hand
+
+    //** VYTVORENI HTML ELEMENTU CISTE JAVA-SCRIPTEM **//
+    const clockFace = document.querySelector('.clock-face');        //do promenne clockFace priradi <div> s classou .clock-face
+    const hourHand = document.createElement("div");                 //do promenne hourHand vytvori <div>
+    hourHand.className = "hand hour-hand";                          //vytvorenemu divu v hourHand prida classu "hand hour-hand"
+    clockFace.appendChild(hourHand);                                //do <divu> v promenne clockFace prida <div> z promenne hourHand
+    //** VYTVORENI HTML ELEMENTU CISTE JAVA-SCRIPTEM **//
+
+    function setDate() {                                            //funkce pro nastaveni casu
+        const now = new Date();                                     //do promenne now priradi aktulni datum a casu
+
+        const seconds = now.getSeconds();                           //do promenne seconds priradi aktualni vterinu
+        const secondsDegrees = ((seconds / 60) * 360) + 90;         //prevod vterin na uhlove stupne (+90 je kvuli prvnotnimu otoceni do svisle polohy)
+        secondHand.style.transform = `rotate(${secondsDegrees}deg)`;//promenne secondHand prida do stylu transform s hodnotou secondsDegrees
+        console.log('vteriny: ', seconds);
 
 
+        const mins = now.getMinutes();                              //do promenne mins priradi aktualni minutu
+        const minsDegrees = ((mins / 60) * 360) + 90;               //prevod minut na uhlove stupne (+90 je kvuli prvnotnimu otoceni do svisle polohy)
+        minsHand.style.transform = `rotate(${minsDegrees}deg)`,     //promenne minsHand prida do stylu transform s hodnotou minsDegrees
+        console.log('minuty: ', mins);
+
+        const hours = now.getHours();                               //do promenne hours priradi aktualni hodinu
+        const hoursDegrees = ((hours / 12) * 360) + 90;             //prevod hodin na uhlove stupne (+90 je kvuli prvnotnimu otoceni do svisle polohy)
+        hourHand.style.transform = `rotate(${hoursDegrees}deg)`,    //promenne hourHand prida do stylu transform s hodnotou hoursDegrees
+        console.log('hodiny: ', hours);
+    }
+
+    setInterval(setDate, 1000);
   </script>
 </body>
 </html>

@@ -83,7 +83,7 @@
     //Funkce pro ukonceni stylu
     function ukonciTransiton(e) {
         //console.log(e);                               //vypise vsechny prvky s "transitionend"
-        //if (e.propertyName !== 'transform') return;   //pokud to neni transform, tak skonci. Ale nevim proc
+        if (e.propertyName !== 'transform') return;     //pokud to neni transform, tak skonci. Ale nevim proc...
         this.classList.remove('playing');               //odebere z classListu classu "playing"
     }
 
