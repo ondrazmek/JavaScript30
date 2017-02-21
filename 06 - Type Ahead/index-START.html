@@ -14,8 +14,54 @@
       <li>or a state</li>
     </ul>
   </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+  <script>
+  const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+  const cities = [];            //Pole mest
+
+//  const prom = fetch(endpoint); //Nafetchuje json do promenne prom
+//  console.log('prom: ', prom);  //Vypise promennou do konzole
+
+      fetch(endpoint)                           //Nafetchuje json do promise
+          .then(blob => blob.json())            //pak do promenne blob "naplni" promise json
+          .then(data => cities.push(...data));  //pak do pole cities "napushuje" data z jsonu
+
+      console.log('cities: ', cities);          //vypise promennou cities
+
+      function najdiMesto(slovoKporovnani, cities) {                    //funkce najdiMesto() s parametry slovoKporovnani a pole cities
+          return cities.filter(misto => {                               //vraci pole objektu
+            const regex = new RegExp(slovoKporovnani, 'gi');            //regularni vyraz - vstupni slovo slovoKporovnani s parametry 'gi'
+            return misto.city.match(regex) || misto.state.match(regex)  //vracene objekty
+          });
+      }
+
+      function cisloSCarkama(x) {                                       //funkce pro prevod cisla na cislo s carkami
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');    //regularni vyraz pro prevod cisla
+      }
+
+      function zobrazVysledek() {                           //funkce pro zobrazeni vysledku
+          const vysledky = najdiMesto(this.value, cities);  //do promenne vysledky naplni pole objektu z funkce najdiMesto()
+          console.log('vysledky: ', vysledky);              //vypise promennou vysledky
+          const html = vysledky.map(misto => {              //do promenne html naplni html z objektu v poli vysledky
+              const regex = new RegExp(this.value, 'gi');   //do promenne regex naplni zadane slovo
+              const cityName = misto.city.replace(regex, `<span class="hl">${this.value}</span>`);      //zadanemu vyrazu prida classu .hl pro zvyrazneni
+              const stateName = misto.state.replace(regex, `<span class="hl">${this.value}</span>`);
+              return`
+                    <li>
+                        <span class="name">${cityName}, ${stateName}</span>
+                        <span class="population">${cisloSCarkama(misto.population)}</span>
+                    </li>
+                `;
+          }).join('');
+          vysledekHledani.innerHTML = html; //do promenne vysledekHledani naplni promennou html
+      }
+
+      const vstupHledani = document.querySelector('.search');           //do promenne vstupHledani naplni html input s classou .search
+      const vysledekHledani = document.querySelector('.suggestions');   //do promenne vysledekHledani naplni html div s classou .suggestions
+
+      vstupHledani.addEventListener('change', zobrazVysledek);          //html inputu v promenne vstupHledani prida listener 'change' a funkci zobrazVysledek()
+      vstupHledani.addEventListener('keyup', zobrazVysledek);           //html inputu v promenne vstupHledani prida listener 'keyup' a funkci zobrazVysledek()
 
 </script>
   </body>

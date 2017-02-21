@@ -5,15 +5,84 @@
   <title>HTML5 Canvas</title>
 </head>
 <body>
-<canvas id="draw" width="800" height="800"></canvas>
+
+  <style>
+    html, body {
+      margin:0;
+    }
+
+    canvas {
+      border: dashed 1px black;
+    }
+  </style>
+  <canvas id="draw" width="800" height="800"></canvas> <!-- platno s plochou 800/800 -->
 <script>
+  const canvas = document.querySelector('#draw'); //Nacteni platna s id="draw" do promenne canvas
+  const ctx = canvas.getContext('2d');            //Do promenne ctx nacte 2D context z platna canvas
+  
+  console.log('canvas: ', canvas);
+  console.log('ctx: ', ctx);
+
+  canvas.width = window.innerWidth - 10;    //nastavi platnu sirku podle velikosti okna minus 10px
+  canvas.height = window.innerHeight - 10;  //nastvai platnu vysku podle velikosti okna minus 10px
+
+  ctx.strokeStyle = '#BADA55';  //nastavi barvu cary na platne
+  ctx.lineJoin = 'round';       //nastavi napojeni bodu cary
+  ctx.lineCap = 'round';        //nastavi zakonceni cary
+  ctx.lineWidth = 30;           //nastavi tloustku cary
+  //ctx.globalCompositeOperation = 'multiply';  //Efekt prolinani barev, viz dokumentace
+
+  //promenne pro rizeni kresleni na platno
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 0;          //barva cary
+  let direction = true; //tloustka cary
+
+  //Funkce pro kresleni
+  function draw(e) {
+      if (!isDrawing) return; //Pokud je promenna false, tak funkce skonci
+      console.log('e: ', e);
+
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`; //Nastavi barvu cary s pouzitim hodnoty v promenne hue
+
+      ctx.beginPath();                  //urcuje zacatek kresleni na platno
+      ctx.moveTo(lastX, lastY);         //pozice zacatku kresleni na platne z promennych lastY a lastX
+      ctx.lineTo(e.offsetX, e.offsetY); //pozice kresleni odectena z platna
+      ctx.stroke();                     //provadi samotne kresleni
+      [lastX, lastY] = [e.offsetX, e.offsetY];  //nastavuje promenne lastX a lastY na hodnoty odectne z platna
+      hue++;                            //inkrementuje promennou hue
+
+      //kdyz je promenna hue vetsi nebo rovna 360, tak ji vynuluje
+      if (hue >= 360) {
+          hue = 0;
+      }
+
+      //kdyz je tloustka cary vetsi nez 100 nebo mensi nez 1, tak prohodit promennou direction
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+          direction = !direction;
+      }
+
+      //Kdyz je direction true, tak inkrementovat, kdyz false, tak dekrementovat
+      if (direction) {
+          ctx.lineWidth++
+      } else {
+          ctx.lineWidth--
+      }
+  }
+
+  //priradi promenne canvas listener 'mousedown'
+  canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;                         //nastavi isDrawing na true
+      [lastX, lastY] = [e.offsetX, e.offsetY];  //nacte do promenych lastX a lastY pozici kliknut
+  });
+
+  canvas.addEventListener('mousemove', draw);   //pri pohybu mysi zavola funkcu draw()
+  canvas.addEventListener('mouseup', () => isDrawing = false);  //ukonci kresleni
+  canvas.addEventListener('mouseout', () => isDrawing = false); //ukonci kresleni
+
 </script>
 
-<style>
-  html, body {
-    margin:0;
-  }
-</style>
 
 </body>
 </html>
