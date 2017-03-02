@@ -64,7 +64,7 @@
    When a user clicks a checkbox, holds Shift, and then clicks another checkbox a few rows down, all the checkboxes inbetween those two checkboxes should be checked.
 
   -->
-  <div class="inbox">
+<div class="inbox">
     <div class="item">
       <input type="checkbox">
       <p>This is an inbox layout.</p>
@@ -101,9 +101,39 @@
       <input type="checkbox">
       <p>Don't forget to tweet your result!</p>
     </div>
-  </div>
+</div>
 
 <script>
+    //querySelectorAll nacet vsechny inputy typu checkbox z divu se stylem .infox
+    const checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]');
+
+    let posledniKliknuti;   //definice promenne - vychozi stav je undefined
+
+    function kliknuto(e) {  //funkce probehne po kliknuti na checkbox
+        let jeMezi = false; //definice promenne- vychozi stav je false
+
+        //pokud je stisknuta klavesa shift a zaroven je oznaceny aktualni checkbox tak...
+        if (e.shiftKey && this.checked) {
+            checkboxes.forEach(checkbox => { //... tak projdi vsechny checkboxy v promenne checkboxes
+                console.log('checkbox: ', checkbox);
+                //pokud
+                if (checkbox === this || checkbox === posledniKliknuti) {
+                    jeMezi = !jeMezi;
+                    console.log('Zacatek pole mezi: ');
+                }
+
+                if (jeMezi) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
+        posledniKliknuti = this;    //do promenne "ulozi" checkbox, na ketry bylo kliknuto
+    }
+
+    //vsem imputum typu checkbox prida EventListener "clik" s funkci kliknuto()
+    checkboxes.forEach(checkbox => checkbox.addEventListener('click', kliknuto));
+
 </script>
 </body>
 </html>
